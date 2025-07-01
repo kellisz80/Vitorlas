@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A vitorlázásig hátralévő idő</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(90deg, 
+                #FF0000, 
+                #FF7F00, 
+                #FFFF00, 
+                #00FF00, 
+                #0000FF, 
+                #4B0082, 
+                #9400D3,
+                #FF0000
+            );
+            background-size: 300% 100%;
+            animation: rainbowMove 20s linear infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .countdown-container {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-number {
+            font-size: 3rem;
+            font-weight: bold;
+            line-height: 1;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .image-container {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .image-frame {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            height: 400px;
+            background: #333;
+        }
+
+        .image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .image-counter {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        @keyframes rainbowMove {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 100% 0%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .countdown-container {
+                padding: 20px;
+            }
+            
+            .time-number {
+                font-size: 2rem;
+            }
+            
+            .image-frame {
+                height: 250px;
+            }
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        .fade-in {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">A vitorlázásig hátralévő idő</h1>
+        
+        <div class="countdown-container">
+            <div class="countdown">
+                <div class="time-unit">
+                    <div class="time-number" id="days">00</div>
+                    <div class="time-label">Nap</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-number" id="hours">00</div>
+                    <div class="time-label">Óra</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-number" id="minutes">00</div>
+                    <div class="time-label">Perc</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-number" id="seconds">00</div>
+                    <div class="time-label">Másodperc</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-container">
+            <div class="image-frame">
+                <img id="slideshow-image" src="https://picsum.photos/600/400?random=1" alt="Véletlenszerű kép">
+                <div class="image-counter">
+                    <span id="current-image">1</span> / <span id="total-images">5</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Célzott dátum beállítása (módosítsd ezt a saját dátumra)
+        const targetDate = new Date('2026-06-27T09:00:00').getTime();
+
+        // Képek listája - cseréld ki a saját képeidre
+        const images = [
+            'https://picsum.photos/600/400?random=1',
+            'https://picsum.photos/600/400?random=2',
+            'https://picsum.photos/600/400?random=3',
+            'https://picsum.photos/600/400?random=4',
+            'https://picsum.photos/600/400?random=5'
+        ];
+
+        let currentImageIndex = 0;
+
+        // Visszaszámláló frissítése
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            } else {
+                // Ha lejárt az idő
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+            }
+        }
+
+        // Kép váltása véletlenszerűen
+        function changeImage() {
+            const imageElement = document.getElementById('slideshow-image');
+            const currentImageSpan = document.getElementById('current-image');
+            
+            // Fade out effektus
+            imageElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                // Véletlenszerű kép kiválasztása (de ne ugyanaz legyen)
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * images.length);
+                } while (randomIndex === currentImageIndex && images.length > 1);
+                
+                currentImageIndex = randomIndex;
+                
+                // Új kép betöltése
+                imageElement.src = images[currentImageIndex];
+                currentImageSpan.textContent = currentImageIndex + 1;
+                
+                // Fade in effektus
+                imageElement.style.opacity = '1';
+            }, 500);
+        }
+
+        // Teljes képek számának beállítása
+        document.getElementById('total-images').textContent = images.length;
+
+        // Időzítők indítása
+        updateCountdown(); // Azonnali frissítés
+        setInterval(updateCountdown, 1000); // Másodpercenként frissítés
+
+        changeImage(); // Első kép betöltése
+        setInterval(changeImage, 3000); // 3 másodpercenként képváltás
+
+        // Kép betöltési hiba kezelése
+        document.getElementById('slideshow-image').onerror = function() {
+            this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPktlcCBuZW0gdGFsw6FsaGF0w7M8L3RleHQ+PC9zdmc+';
+        };
+    </script>
+</body>
+</html>
