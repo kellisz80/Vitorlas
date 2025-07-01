@@ -185,9 +185,9 @@
 
         <div class="image-container">
             <div class="image-frame">
-                <img id="slideshow-image" src="https://picsum.photos/600/400?random=1" alt="Véletlenszerű kép">
+                <img id="slideshow-image" src="IMG_0577.jpg" alt="Véletlenszerű kép">
                 <div class="image-counter">
-                    <span id="current-image">1</span> / <span id="total-images">5</span>
+                    <span id="current-image">1</span> / <span id="total-images">10</span>
                 </div>
             </div>
         </div>
@@ -203,7 +203,12 @@
             'IMG_0683.jpg',
             'IMG_0663.jpg',
             'IMG_0584.jpg',
-            'IMG_9015.jpg'
+            'IMG_9015.jpg',
+            'IMG_0691.jpg',
+            'IMG_9013.jpg',
+            'IMG_0696.jpg',
+            'IMG_0658.jpg',
+            'IMG_0588.jpg'
         ];
 
         let currentImageIndex = 0;
@@ -266,7 +271,7 @@
         setInterval(updateCountdown, 1000); // Másodpercenként frissítés
 
         changeImage(); // Első kép betöltése
-        setInterval(changeImage, 3000); // 3 másodpercenként képváltás
+        setInterval(changeImage, 6000); // 6 másodpercenként képváltás
 
         // Kép betöltési hiba kezelése
         document.getElementById('slideshow-image').onerror = function() {
